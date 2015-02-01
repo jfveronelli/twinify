@@ -4,6 +4,7 @@ import java.util.Date;
 
 import ar.org.crossknight.twinify.util.Formatter;
 import ar.org.crossknight.twinify.util.Path;
+import ar.org.crossknight.twinify.util.Utils;
 
 public class Archive implements Resource {
 
@@ -17,7 +18,7 @@ public class Archive implements Resource {
 	public Archive(Folder parent, String name, Date lastModified, long size) {
 		this.parent = parent;
 		this.name = name;
-		this.lastModified = lastModified;
+		this.lastModified = Utils.stripMillis(lastModified);
 		this.size = size;
 		parent.add(this);
 	}

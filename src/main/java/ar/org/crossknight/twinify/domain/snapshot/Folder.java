@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import ar.org.crossknight.twinify.util.Utils;
+
 public class Folder implements Resource {
 
     public static final String ROOT_NAME = "[ROOT]";
@@ -44,7 +46,7 @@ public class Folder implements Resource {
     }
 
     public Folder getSubfolder(String name) {
-        return getResource(subfolders, name);
+        return Utils.get(subfolders, name);
     }
 
     public void add(Archive archive) {
@@ -56,7 +58,7 @@ public class Folder implements Resource {
     }
 
     public Archive getArchive(String name) {
-        return getResource(archives, name);
+        return Utils.get(archives, name);
     }
 
     @Override
@@ -69,13 +71,13 @@ public class Folder implements Resource {
     	return getPath();
     }
 
-    private static <R extends Resource> R getResource(Collection<R> resources, String name) {
-        for (R r: resources) {
-            if (r.getName().equals(name)) {
-                return r;
-            }
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Folder) {
+            Folder f = (Folder)o;
+            return name.equals(f.getName()) && Utils.equals(subfolders, f.getSubfolders()) && Utils.equals(archives, f.getArchives());
         }
-        return null;
+        return false;
     }
 
 }

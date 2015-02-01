@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import ar.org.crossknight.twinify.domain.snapshot.Folder;
 import ar.org.crossknight.twinify.domain.snapshot.Snapshot;
+
 import static org.junit.Assert.*;
 
 public class UtilsTest {
@@ -32,11 +33,11 @@ public class UtilsTest {
 
     @Test
     public void wipeShouldDeleteSubfoldersAndReadOnlyFiles() throws IOException {
-        File folder = new File(BASE_FOLDER, "a");
+        File folder = new File(BASE_FOLDER, "aa");
         assertTrue(folder.mkdir());
-        File subfolder = new File(folder, "b");
+        File subfolder = new File(folder, "bb");
         assertTrue(subfolder.mkdir());
-        File file = new File(folder, "c");
+        File file = new File(folder, "cc");
         assertTrue(file.createNewFile());
         assertTrue(file.setWritable(false, false));
 

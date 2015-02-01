@@ -12,7 +12,7 @@ public class FormatterTest {
     @Test
 	public void formatAndParseDateShouldBeReversibleAndHaveCustomSymbols() throws ParseException {
 	    Date now = new Date();
-	    long millis = now.getTime() / 1000 * 1000;
+	    long millis = now.getTime() / 1000L * 1000L;
 
 	    String text = Formatter.format(now);
 	    Date date = Formatter.parseDate(text);
