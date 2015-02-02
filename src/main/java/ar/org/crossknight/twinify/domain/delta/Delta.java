@@ -65,6 +65,14 @@ public class Delta {
         }
     }
 
+    public void setTwinPath(String twinPath) {
+        this.twinPath = twinPath;
+    }
+
+    public String getTwinPath() {
+        return twinPath;
+    }
+
     public void add(DeleteResourceTask task) {
         deleteTasks.add(task);
     }
@@ -79,6 +87,22 @@ public class Delta {
 
     public void add(CreateArchiveTask task) {
         createTasks.add(task);
+    }
+
+    public boolean remove(Task task) {
+        if (task instanceof DeleteResourceTask) {
+            return deleteTasks.remove(task);
+        }
+        if (task instanceof UpdateArchiveTask) {
+            return updateTasks.remove(task);
+        }
+        if (task instanceof CreateFolderTask) {
+            return createTasks.remove(task);
+        }
+        if (task instanceof CreateArchiveTask) {
+            return createTasks.remove(task);
+        }
+        return false;
     }
 
     public List<Task> getTasks() {

@@ -3,18 +3,40 @@ package ar.org.crossknight.twinify.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 
 import ar.org.crossknight.twinify.domain.snapshot.Folder;
 import ar.org.crossknight.twinify.domain.snapshot.Snapshot;
-
 import static org.junit.Assert.*;
 
 public class UtilsTest {
 
     private static final File BASE_FOLDER = new File("src/test/samples/");
+
+    @Test
+    public void getShouldReturnNullWhenNameIsNotFound() {
+        Folder root = new Snapshot("/").getRoot();
+        Folder f1 = new Folder(root, "Albany");
+        Folder f2 = new Folder(root, "addendum");
+
+        Folder result = Utils.get(Arrays.asList(f1, f2), "norway");
+
+        assertNull(result);
+    }
+
+    @Test
+    public void getShouldSucceed() {
+        Folder root = new Snapshot("/").getRoot();
+        Folder f1 = new Folder(root, "Albany");
+        Folder f2 = new Folder(root, "albany");
+
+        Folder result = Utils.get(Arrays.asList(f1, f2), "albany");
+
+        assertSame(f2, result);
+    }
 
     @Test
     public void sortShouldSucceed() {
@@ -29,6 +51,24 @@ public class UtilsTest {
 
         assertNotSame(folders, sorted);
         assertArrayEquals(new Object[] {f3, f2, f1, f4}, sorted.toArray());
+    }
+
+    @Test
+    public void stripMillisShouldReturnSameDateWhenDateHas0Milliseconds() {
+        Date date = new Date(23000L);
+
+        Date result = Utils.stripMillis(date);
+
+        assertSame(date, result);
+    }
+
+    @Test
+    public void stripMillisShouldReturnDateWith0Milliseconds() {
+        Date date = new Date(23050L);
+
+        Date result = Utils.stripMillis(date);
+
+        assertEquals(23000L, result.getTime());
     }
 
     @Test

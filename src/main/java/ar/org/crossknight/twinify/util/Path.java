@@ -16,6 +16,12 @@ public final class Path {
         return path.substring(path.lastIndexOf(Resource.SEPARATOR) + 1);
     }
 
+    public static final String extension(String path) {
+        String name = name(path);
+        int pos = name.indexOf('.');
+        return pos >= 0? name.substring(pos + 1): "";
+    }
+
     public static final String parent(String path) {
         path = uniformSeparators(path);
         if (path.equals(Resource.SEPARATOR)) {
