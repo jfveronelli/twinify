@@ -1,8 +1,6 @@
-package ar.org.crossknight.twinify;
+package ar.org.crossknight.twinify.ui;
 
 import java.awt.EventQueue;
-
-import ar.org.crossknight.twinify.ui.AppFrame;
 
 public final class App implements Runnable {
 

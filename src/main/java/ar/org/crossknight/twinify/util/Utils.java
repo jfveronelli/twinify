@@ -68,7 +68,7 @@ public final class Utils {
                 wipe(f);
             }
         }
-        if (!file.delete()) {
+        if (file.exists() && !file.delete()) {
             throw new RuntimeException("Unable to delete [" + file.getAbsolutePath() + "]");
         }
     }

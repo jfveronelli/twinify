@@ -20,10 +20,10 @@ public class Delta {
         this.twinPath = twinPath;
     }
 
-    public Delta(Snapshot a, Snapshot twin) {
+    public Delta(Snapshot donor, Snapshot twin) {
         this.twinPath = twin.getFullPath();
         UidGenerator uidGen = new UidGenerator();
-        Folder root = a.getRoot();
+        Folder root = donor.getRoot();
         compare(root, twin.getRoot(), uidGen);
     }
 

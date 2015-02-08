@@ -22,13 +22,17 @@ import ar.org.crossknight.twinify.util.UidGenerator;
 
 public final class DeltaSerializer {
 
-    private static final String FILENAME = "@delta.txt";
+    private static final String FILENAME = "@tasks.txt";
     private static final String EOL = "\n";
 
     private DeltaSerializer() {}
 
     public static final void write(File directory, Delta delta) throws IOException {
-        checkDirectory(directory);
+        if (!directory.exists()) {
+            createDirectory(directory);
+        } else {
+            checkDirectory(directory);
+        }
         File file = new File(directory, FILENAME);
         Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8");
         writer.write(delta + EOL);
@@ -75,6 +79,12 @@ public final class DeltaSerializer {
     private static void checkDirectory(File directory) throws IOException {
         if (!directory.isDirectory()) {
             throw new IOException("Expected a directory at [" + directory.getAbsolutePath() + "]");
+        }
+    }
+
+    private static void createDirectory(File directory) throws IOException {
+        if (!directory.mkdirs()) {
+            throw new IOException("Could not create directory [" + directory.getAbsolutePath() + "]");
         }
     }
 
