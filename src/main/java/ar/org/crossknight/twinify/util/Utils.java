@@ -63,13 +63,15 @@ public final class Utils {
     }
 
     public static final void wipe(File file) {
-        if (file.isDirectory()) {
-            for (File f: file.listFiles()) {
-                wipe(f);
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                for (File f: file.listFiles()) {
+                    wipe(f);
+                }
             }
-        }
-        if (file.exists() && !file.delete()) {
-            throw new RuntimeException("Unable to delete [" + file.getAbsolutePath() + "]");
+            if (!file.delete()) {
+                throw new RuntimeException("Unable to delete [" + file.getAbsolutePath() + "]");
+            }
         }
     }
 
