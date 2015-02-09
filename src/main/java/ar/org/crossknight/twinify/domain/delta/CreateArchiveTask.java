@@ -27,8 +27,13 @@ public class CreateArchiveTask implements Task {
 
     @Override
     public void runOn(String fullPath) {
+        File fileB = new File(Path.concat(fullPath, path));
+        if (fileB.isFile()) {
+            Utils.wipe(fileB);
+        }
+
         try {
-            Utils.copy(new File(contentPath), new File(Path.concat(fullPath, path)));
+            Utils.copy(new File(contentPath), fileB);
         } catch (IOException ex) {
             throw new RuntimeException("Could not copy file", ex);
         }
