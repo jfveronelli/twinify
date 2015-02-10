@@ -10,6 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.dist>${basedir}/target/PortableTwinify</project.dist>
     </properties>
 
     <build>
@@ -28,12 +29,35 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
+                    <outputDirectory>${project.dist}</outputDirectory>
+                    <finalName>${project.name}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>ar.org.crossknight.twinify.console.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                     <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                           <outputDirectory>${project.dist}</outputDirectory>
+                           <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/extras</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                           </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

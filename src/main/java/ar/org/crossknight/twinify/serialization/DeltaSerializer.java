@@ -48,11 +48,10 @@ public final class DeltaSerializer {
         File file = new File(directory, FILENAME);
         BufferedReader reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(file)), "UTF-8"));
 
-        String twinPath = reader.readLine().substring(Task.HEADER_SIZE);
-        Delta delta = new Delta(twinPath);
+        Delta delta = new Delta(reader.readLine().substring(Task.HEADER_SIZE));
 
-        String line = reader.readLine();
-        while (line != null) {
+        String line;
+        while ((line = reader.readLine()) != null) {
             String header = line.substring(0, Task.HEADER_SIZE);
             String config = line.substring(Task.HEADER_SIZE);
             if (header.equals(DeleteResourceTask.HEADER)) {
