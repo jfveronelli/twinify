@@ -4,8 +4,8 @@ import java.io.File;
 
 public abstract class AbstractCommand {
 
-    protected static final String SNAPSHOT_FILE = "snapshot.txt";
-    protected static final String DELTA_DIRECTORY = "delta";
+    public static final String SNAPSHOT_FILE = "snapshot.txt";
+    public static final String DELTA_DIRECTORY = "delta";
 
     protected File checkPath(String path) {
         File file = new File(path);

@@ -22,15 +22,18 @@ public class Snapshot {
     }
 
     private static void populate(Folder folder, File directory) {
-		for (File file: directory.listFiles()) {
-	    	if (file.isFile()) {
-	    		new Archive(folder, file.getName(), new Date(file.lastModified()), file.length());
-	    	} else if (file.isDirectory()) {
-	    		populate(new Folder(folder, file.getName()), file);
-	    	} else {
-	    		throw new RuntimeException("Not a file or directory [" + file.getAbsolutePath() + "]");
-	    	}
-	    }
+        File[] files = directory.listFiles();
+        if (files != null) {
+    		for (File file: files) {
+    	    	if (file.isFile()) {
+    	    		new Archive(folder, file.getName(), new Date(file.lastModified()), file.length());
+    	    	} else if (file.isDirectory()) {
+    	    		populate(new Folder(folder, file.getName()), file);
+    	    	} else {
+    	    		throw new RuntimeException("Not a file or directory [" + file.getAbsolutePath() + "]");
+    	    	}
+    	    }
+        }
     }
 
     public String getFullPath() {
