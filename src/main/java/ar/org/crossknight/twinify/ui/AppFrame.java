@@ -43,7 +43,6 @@ public class AppFrame extends JFrame {
     private final JButton btnScan;
     private final JButton btnCompare;
     private final JButton btnClone;
-    private final JLabel lblPreview;
     private final JButton btnPlay;
     private final JTable tblTasks;
     private final JProgressBar progressBar;
@@ -129,15 +128,11 @@ public class AppFrame extends JFrame {
 
         btnClone = new JButton();
         btnClone.addActionListener(new CloneActionListener());
-        btnClone.setToolTipText("Clone donor over target");
+        btnClone.setToolTipText("Preview cloning donor over target");
         btnClone.setIcon(new ImageIcon(AppFrame.class.getResource("/images/clone-16x16.png")));
         toolBar.add(btnClone);
 
         toolBar.addSeparator();
-
-        lblPreview = new JLabel("Preview");
-        lblPreview.setEnabled(false);
-        toolBar.add(lblPreview);
 
         btnPlay = new JButton((String)null);
         btnPlay.setEnabled(false);
@@ -238,7 +233,6 @@ public class AppFrame extends JFrame {
     public void updatePreview(Delta delta) {
         this.delta = delta;
         boolean enabled = delta != null;
-        lblPreview.setEnabled(enabled);
         btnPlay.setEnabled(enabled);
     }
 

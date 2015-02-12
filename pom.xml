@@ -33,7 +33,7 @@
                     <finalName>${project.name}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>ar.org.crossknight.twinify.console.App</mainClass>
+                            <mainClass>ar.org.crossknight.twinify.ui.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

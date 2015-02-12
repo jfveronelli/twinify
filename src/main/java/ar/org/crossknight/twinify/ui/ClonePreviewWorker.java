@@ -20,7 +20,7 @@ public class ClonePreviewWorker extends AbstractWorker {
         delta = DeltaSerializer.read(deltaDirectory);
         setProgress(100);
 
-        return "Please review changes";
+        return "Please review changes before executing tasks";
     }
 
     @Override

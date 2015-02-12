@@ -40,7 +40,7 @@ public class CompareWorker extends AbstractWorker {
         DeltaSerializer.write(deltaDirectory, delta);
         setProgress(100);
 
-        return "Compare complete";
+        return "Comparison complete";
     }
 
 }
