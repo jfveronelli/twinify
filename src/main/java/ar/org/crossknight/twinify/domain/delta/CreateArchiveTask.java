@@ -6,28 +6,27 @@ import java.io.IOException;
 import ar.org.crossknight.twinify.util.Path;
 import ar.org.crossknight.twinify.util.Utils;
 
-public class CreateArchiveTask implements Task {
+public class CreateArchiveTask extends Task {
 
     public static final String HEADER = "COPY   ";
 
-    private String path;
     private String uid;
     private String contentPath;
 
     public CreateArchiveTask(String path, String uid, String contentPath) {
-        this.path = path;
+        super(path);
         this.uid = uid;
         this.contentPath = contentPath;
     }
 
     @Override
-    public String getPath() {
-        return path;
+    public Type getType() {
+        return Type.CREATE_ARCHIVE;
     }
 
     @Override
     public void runOn(String fullPath) {
-        File fileB = new File(Path.concat(fullPath, path));
+        File fileB = new File(Path.concat(fullPath, getPath()));
         if (fileB.isFile()) {
             Utils.wipe(fileB);
         }
@@ -49,7 +48,7 @@ public class CreateArchiveTask implements Task {
     }
 
     String partialToString() {
-        return uid + " " + path;
+        return uid + " " + getPath();
     }
 
     @Override

@@ -5,7 +5,7 @@ import java.io.File;
 import ar.org.crossknight.twinify.domain.delta.Delta;
 import ar.org.crossknight.twinify.serialization.DeltaSerializer;
 
-public class CloneCommand extends AbstractCommand {
+public class CloneCommand extends Command {
 
     @Override
     public String getName() {
@@ -14,7 +14,7 @@ public class CloneCommand extends AbstractCommand {
 
     @Override
     public void execute(String path) throws Exception {
-        File deltaDirectory = new File(DELTA_DIRECTORY);
+        File deltaDirectory = new File(Delta.DEFAULT_DELTA_DIRECTORY);
         Delta delta = DeltaSerializer.read(deltaDirectory);
         delta.setTwinPath(path);
         delta.run();

@@ -2,11 +2,10 @@ package ar.org.crossknight.twinify.ui;
 
 import java.io.File;
 
-import ar.org.crossknight.twinify.console.AbstractCommand;
 import ar.org.crossknight.twinify.domain.delta.Delta;
 import ar.org.crossknight.twinify.serialization.DeltaSerializer;
 
-public class ClonePreviewWorker extends AbstractWorker {
+public class ClonePreviewWorker extends Worker {
 
     private Delta delta;
 
@@ -16,7 +15,7 @@ public class ClonePreviewWorker extends AbstractWorker {
 
     @Override
     protected String doInBackground() throws Exception {
-        File deltaDirectory = new File(AbstractCommand.DELTA_DIRECTORY);
+        File deltaDirectory = new File(Delta.DEFAULT_DELTA_DIRECTORY);
         delta = DeltaSerializer.read(deltaDirectory);
         setProgress(100);
 

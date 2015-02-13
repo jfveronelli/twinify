@@ -6,8 +6,8 @@ public final class App {
 
     public static final void main(String[] args) throws Exception {
         if (args.length == 2) {
-            AbstractCommand[] commands = {new ScanCommand(), new CompareCommand(), new CloneCommand()};
-            for (AbstractCommand command: commands) {
+            Command[] commands = {new ScanCommand(), new CompareCommand(), new CloneCommand()};
+            for (Command command: commands) {
                 if (command.getName().equalsIgnoreCase(args[0])) {
                     try {
                         command.execute(args[1]);

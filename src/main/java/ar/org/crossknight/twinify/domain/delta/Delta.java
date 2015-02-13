@@ -1,7 +1,6 @@
 package ar.org.crossknight.twinify.domain.delta;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ar.org.crossknight.twinify.domain.snapshot.Archive;
@@ -10,6 +9,8 @@ import ar.org.crossknight.twinify.domain.snapshot.Snapshot;
 import ar.org.crossknight.twinify.util.UidGenerator;
 
 public class Delta {
+
+    public static final String DEFAULT_DELTA_DIRECTORY = "delta";
 
     private String twinPath;
     private List<Task> deleteTasks = new ArrayList<Task>();
@@ -109,7 +110,7 @@ public class Delta {
         List<Task> tasks = new ArrayList<Task>(deleteTasks);
         tasks.addAll(updateTasks);
         tasks.addAll(createTasks);
-        return Collections.unmodifiableList(tasks);
+        return tasks;
     }
 
     public void run() {

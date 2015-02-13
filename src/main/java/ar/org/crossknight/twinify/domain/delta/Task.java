@@ -2,14 +2,26 @@ package ar.org.crossknight.twinify.domain.delta;
 
 import java.io.File;
 
-public interface Task {
+public abstract class Task {
 
-    int HEADER_SIZE = 7;
+    public static final int HEADER_SIZE = 7;
 
-    String getPath();
+    public static enum Type {CREATE_FOLDER, CREATE_ARCHIVE, UPDATE_ARCHIVE, DELETE_RESOURCE}
 
-    void runOn(String fullPath);
+    private String path;
 
-    void saveExtras(File directory);
+    Task(String path) {
+        this.path = path;
+    }
+
+    public abstract Type getType();
+
+    public String getPath() {
+        return path;
+    }
+
+    public abstract void runOn(String fullPath);
+
+    public void saveExtras(File directory) {}
 
 }

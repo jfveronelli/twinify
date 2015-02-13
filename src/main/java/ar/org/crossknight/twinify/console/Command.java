@@ -2,10 +2,7 @@ package ar.org.crossknight.twinify.console;
 
 import java.io.File;
 
-public abstract class AbstractCommand {
-
-    public static final String SNAPSHOT_FILE = "snapshot.txt";
-    public static final String DELTA_DIRECTORY = "delta";
+public abstract class Command {
 
     protected File checkPath(String path) {
         File file = new File(path);

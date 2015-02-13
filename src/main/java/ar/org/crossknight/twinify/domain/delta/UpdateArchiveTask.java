@@ -9,6 +9,11 @@ public class UpdateArchiveTask extends CreateArchiveTask {
     }
 
     @Override
+    public Type getType() {
+        return Type.UPDATE_ARCHIVE;
+    }
+
+    @Override
     public String toString() {
         return HEADER + partialToString();
     }

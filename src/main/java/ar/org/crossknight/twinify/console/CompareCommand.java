@@ -10,7 +10,7 @@ import ar.org.crossknight.twinify.serialization.DeltaSerializer;
 import ar.org.crossknight.twinify.serialization.SnapshotSerializer;
 import ar.org.crossknight.twinify.util.Utils;
 
-public class CompareCommand extends AbstractCommand {
+public class CompareCommand extends Command {
 
     @Override
     public String getName() {
@@ -22,12 +22,12 @@ public class CompareCommand extends AbstractCommand {
         File donorDirectory = checkPath(path);
         Snapshot donorSnapshot = Snapshot.getInstance(donorDirectory);
 
-        InputStream inStream = new FileInputStream(SNAPSHOT_FILE);
+        InputStream inStream = new FileInputStream(Snapshot.DEFAULT_SNAPSHOT_FILE);
         Snapshot twinSnapshot = SnapshotSerializer.read(inStream);
         inStream.close();
 
         Delta delta = new Delta(donorSnapshot, twinSnapshot);
-        File deltaDirectory = new File(DELTA_DIRECTORY);
+        File deltaDirectory = new File(Delta.DEFAULT_DELTA_DIRECTORY);
         Utils.wipe(deltaDirectory);
         DeltaSerializer.write(deltaDirectory, delta);
     }

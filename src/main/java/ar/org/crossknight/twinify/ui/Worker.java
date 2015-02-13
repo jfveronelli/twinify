@@ -4,11 +4,11 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-public abstract class AbstractWorker extends SwingWorker<String, Object> {
+public abstract class Worker extends SwingWorker<String, Object> {
 
     private final AppFrame appFrame;
 
-    public AbstractWorker(AppFrame appFrame) {
+    public Worker(AppFrame appFrame) {
         this.appFrame = appFrame;
     }
 

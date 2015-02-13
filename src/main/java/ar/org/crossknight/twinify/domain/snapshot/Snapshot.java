@@ -7,6 +7,8 @@ import ar.org.crossknight.twinify.util.Path;
 
 public class Snapshot {
 
+    public static final String DEFAULT_SNAPSHOT_FILE = "snapshot.txt";
+
 	private String fullPath;
 	private Folder root;
 

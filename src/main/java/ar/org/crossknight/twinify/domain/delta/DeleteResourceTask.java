@@ -5,32 +5,27 @@ import java.io.File;
 import ar.org.crossknight.twinify.util.Path;
 import ar.org.crossknight.twinify.util.Utils;
 
-public class DeleteResourceTask implements Task {
+public class DeleteResourceTask extends Task {
 
     public static final String HEADER = "DELETE ";
 
-    private String path;
-
     public DeleteResourceTask(String path) {
-        this.path = path;
+        super(path);
     }
 
     @Override
-    public String getPath() {
-        return path;
+    public Type getType() {
+        return Type.DELETE_RESOURCE;
     }
 
     @Override
     public void runOn(String fullPath) {
-        Utils.wipe(new File(Path.concat(fullPath, path)));
+        Utils.wipe(new File(Path.concat(fullPath, getPath())));
     }
 
     @Override
-    public void saveExtras(File directory) {}
-
-    @Override
     public String toString() {
-        return HEADER + path;
+        return HEADER + getPath();
     }
 
 }

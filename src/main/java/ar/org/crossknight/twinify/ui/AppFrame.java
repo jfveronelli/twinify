@@ -2,13 +2,13 @@ package ar.org.crossknight.twinify.ui;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 
 import java.awt.Toolkit;
 
@@ -21,6 +21,8 @@ import java.awt.Insets;
 import java.awt.Component;
 
 import javax.swing.border.BevelBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -29,17 +31,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Comparator;
 
 import javax.swing.ListSelectionModel;
 
 import ar.org.crossknight.twinify.domain.delta.Delta;
+import ar.org.crossknight.twinify.domain.delta.Task;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class AppFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
     private boolean processing = false;
-    private Delta delta;
+    private final TasksTableModel tasksTableModel;
     private final JButton btnScan;
     private final JButton btnCompare;
     private final JButton btnClone;
@@ -47,7 +54,43 @@ public class AppFrame extends JFrame {
     private final JTable tblTasks;
     private final JProgressBar progressBar;
     private final JLabel statusBar;
+    private final DefaultComparator defaultComparator;
     private final ProgressListener progressListener;
+
+    private static class DefaultComparator implements Comparator<Object> {
+        @Override
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareToIgnoreCase(o2.toString());
+        }
+    }
+
+    private static class StringTableCellRenderer extends DefaultTableCellRenderer {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+            JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+            label.setHorizontalAlignment(col == 1? SwingConstants.LEFT: SwingConstants.CENTER);
+            return label;
+        }
+    }
+
+    private static class TaskTypeTableCellRenderer extends DefaultTableCellRenderer {
+        private static final long serialVersionUID = 1L;
+        private static final ImageIcon[] IMAGES = {
+            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png"))
+        };
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+            JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            label.setIcon(IMAGES[((Task.Type)value).ordinal()]);
+            label.setText(null);
+            return label;
+        }
+    }
 
     private class AppWindowAdapter extends WindowAdapter {
         @Override
@@ -57,7 +100,7 @@ public class AppFrame extends JFrame {
                 dispose();
             }
         }
-    };
+    }
 
     private class ScanActionListener implements ActionListener {
         @Override
@@ -92,6 +135,21 @@ public class AppFrame extends JFrame {
         }
     }
 
+    private class TasksTableListener extends KeyAdapter {
+        @Override
+        public void keyReleased(KeyEvent evt) {
+            if (!processing && evt.getKeyCode() == KeyEvent.VK_DELETE) {
+                int[] selected = tblTasks.getSelectedRows();
+                if (selected.length > 0) {
+                    for (int c = 0; c < selected.length; c++) {
+                        selected[c] = tblTasks.convertRowIndexToModel(selected[c]);
+                    }
+                    tasksTableModel.removeRows(selected);
+                }
+            }
+        }
+    }
+
     private class ProgressListener implements PropertyChangeListener {
         @Override
         public  void propertyChange(PropertyChangeEvent evt) {
@@ -102,6 +160,9 @@ public class AppFrame extends JFrame {
     }
 
     public AppFrame() {
+        defaultComparator = new DefaultComparator();
+        progressListener = new ProgressListener();
+
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new AppWindowAdapter());
         setIconImage(Toolkit.getDefaultToolkit().getImage(AppFrame.class.getResource("/images/clone-16x16.png")));
@@ -149,27 +210,29 @@ public class AppFrame extends JFrame {
         getContentPane().add(toolBar, gbc_toolBar);
 
         tblTasks = new JTable();
+        tblTasks.addKeyListener(new TasksTableListener());
+        tblTasks.setShowVerticalLines(false);
         tblTasks.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tblTasks.setAutoCreateRowSorter(true);
-        tblTasks.setModel(new DefaultTableModel(
-            new Object[][] {
-                {null, null},
-            },
-            new String[] {
-                "Operation", "Path"
-            }
-        ) {
-            Class[] columnTypes = new Class[] {
-                String.class, String.class
-            };
-            public Class getColumnClass(int columnIndex) {
-                return columnTypes[columnIndex];
-            }
-        });
+        tblTasks.setDefaultRenderer(String.class, new StringTableCellRenderer());
+        tblTasks.setDefaultRenderer(Task.Type.class, new TaskTypeTableCellRenderer());
         tblTasks.setFillsViewportHeight(true);
+        tblTasks.setGridColor(tblTasks.getTableHeader().getBackground());
+        tasksTableModel = new TasksTableModel();
+        tblTasks.setModel(tasksTableModel);
+        tblTasks.getColumnModel().getColumn(0).setMinWidth(24);
+        tblTasks.getColumnModel().getColumn(0).setPreferredWidth(24);
+        tblTasks.getColumnModel().getColumn(0).setMaxWidth(24);
+        tblTasks.getColumnModel().getColumn(2).setMinWidth(60);
+        tblTasks.getColumnModel().getColumn(2).setPreferredWidth(60);
+        tblTasks.getColumnModel().getColumn(2).setMaxWidth(120);
+        TableRowSorter<TasksTableModel> rowSorter = new TableRowSorter<TasksTableModel>(tasksTableModel);
+        rowSorter.setComparator(0, defaultComparator);
+        rowSorter.setComparator(1, defaultComparator);
+        rowSorter.setComparator(2, defaultComparator);
+        tblTasks.setRowSorter(rowSorter);
+
         JScrollPane spTasks = new JScrollPane(tblTasks);
         spTasks.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        spTasks.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         GridBagConstraints gbc_spTasks = new GridBagConstraints();
         gbc_spTasks.weighty = 1.0;
         gbc_spTasks.weightx = 1.0;
@@ -198,8 +261,6 @@ public class AppFrame extends JFrame {
         gbc_statusBar.gridy = 3;
         getContentPane().add(statusBar, gbc_statusBar);
 
-        progressListener = new ProgressListener();
-
         setMinimumSize(new Dimension(400, 300));
     }
 
@@ -210,7 +271,7 @@ public class AppFrame extends JFrame {
         return fileChooser;
     }
 
-    private void runWorker(AbstractWorker worker) {
+    private void runWorker(Worker worker) {
         processing = true;
         btnScan.setEnabled(false);
         btnCompare.setEnabled(false);
@@ -231,9 +292,10 @@ public class AppFrame extends JFrame {
     }
 
     public void updatePreview(Delta delta) {
-        this.delta = delta;
-        boolean enabled = delta != null;
-        btnPlay.setEnabled(enabled);
+        btnPlay.setEnabled(delta != null);
+        if (delta != null || tblTasks.getRowCount() > 0) {
+            tasksTableModel.setData(delta);
+        }
     }
 
     public void setProgressValue(int value) {

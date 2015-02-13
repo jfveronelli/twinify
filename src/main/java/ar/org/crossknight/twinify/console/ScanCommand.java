@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import ar.org.crossknight.twinify.domain.snapshot.Snapshot;
 import ar.org.crossknight.twinify.serialization.SnapshotSerializer;
 
-public class ScanCommand extends AbstractCommand {
+public class ScanCommand extends Command {
 
     @Override
     public String getName() {
@@ -18,7 +18,7 @@ public class ScanCommand extends AbstractCommand {
     public void execute(String path) throws Exception {
         File file = checkPath(path);
         Snapshot snapshot = Snapshot.getInstance(file);
-        OutputStream stream = new FileOutputStream(SNAPSHOT_FILE);
+        OutputStream stream = new FileOutputStream(Snapshot.DEFAULT_SNAPSHOT_FILE);
         SnapshotSerializer.write(stream, snapshot);
         stream.close();
     }

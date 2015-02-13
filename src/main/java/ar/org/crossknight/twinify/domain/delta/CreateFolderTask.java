@@ -5,24 +5,22 @@ import java.io.IOException;
 
 import ar.org.crossknight.twinify.util.Path;
 
-public class CreateFolderTask implements Task {
+public class CreateFolderTask extends Task {
 
     public static final String HEADER = "CREATE ";
 
-    private String path;
-
     public CreateFolderTask(String path) {
-        this.path = path;
+        super(path);
     }
 
     @Override
-    public String getPath() {
-        return path;
+    public Type getType() {
+        return Type.CREATE_FOLDER;
     }
 
     @Override
     public void runOn(String fullPath) {
-        String folderPath = Path.concat(fullPath, path);
+        String folderPath = Path.concat(fullPath, getPath());
         File file = new File(folderPath);
         if (file.isDirectory()) {
             //Windows is case-insensitive, so we must check the real directory name to assume it already exists
@@ -41,11 +39,8 @@ public class CreateFolderTask implements Task {
     }
 
     @Override
-    public void saveExtras(File directory) {}
-
-    @Override
     public String toString() {
-        return HEADER + path;
+        return HEADER + getPath();
     }
 
 }

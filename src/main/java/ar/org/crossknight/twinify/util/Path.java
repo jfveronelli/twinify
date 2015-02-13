@@ -18,7 +18,7 @@ public final class Path {
 
     public static final String extension(String path) {
         String name = name(path);
-        int pos = name.indexOf('.');
+        int pos = name.lastIndexOf('.');
         return pos >= 0? name.substring(pos + 1): "";
     }
 
