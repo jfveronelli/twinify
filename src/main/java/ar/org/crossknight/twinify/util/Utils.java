@@ -65,8 +65,11 @@ public final class Utils {
     public static final void wipe(File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
-                for (File f: file.listFiles()) {
-                    wipe(f);
+                File[] files = file.listFiles();
+                if (files != null) {
+                    for (File f: files) {
+                        wipe(f);
+                    }
                 }
             }
             if (!file.delete()) {

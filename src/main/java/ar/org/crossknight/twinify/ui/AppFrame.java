@@ -45,7 +45,7 @@ public class AppFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean processing = false;
+    private boolean processing;
     private final TasksTableModel tasksTableModel;
     private final JButton btnScan;
     private final JButton btnCompare;
@@ -54,7 +54,6 @@ public class AppFrame extends JFrame {
     private final JTable tblTasks;
     private final JProgressBar progressBar;
     private final JLabel statusBar;
-    private final DefaultComparator defaultComparator;
     private final ProgressListener progressListener;
 
     private static class DefaultComparator implements Comparator<Object> {
@@ -64,23 +63,21 @@ public class AppFrame extends JFrame {
         }
     }
 
-    private static class StringTableCellRenderer extends DefaultTableCellRenderer {
-        private static final long serialVersionUID = 1L;
+    private static class TaskTypeComparator implements Comparator<Task.Type> {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-            JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-            label.setHorizontalAlignment(col == 1? SwingConstants.LEFT: SwingConstants.CENTER);
-            return label;
+        public int compare(Task.Type t1, Task.Type t2) {
+            return t1.ordinal() - t2.ordinal();
         }
     }
 
     private static class TaskTypeTableCellRenderer extends DefaultTableCellRenderer {
         private static final long serialVersionUID = 1L;
         private static final ImageIcon[] IMAGES = {
-            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")),
-            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")),
-            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")),
-            new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png"))
+            new ImageIcon(AppFrame.class.getResource("/images/task-folder-create-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/task-folder-delete-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/task-archive-create-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/task-archive-update-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/task-archive-delete-16x16.png"))
         };
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
@@ -109,7 +106,7 @@ public class AppFrame extends JFrame {
             if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
                 updatePreview(null);
                 progressBar.setIndeterminate(true);
-                runWorker(new ScanWorker(AppFrame.this, fileChooser.getSelectedFile()));
+                runWorker("Scanning...", new ScanWorker(AppFrame.this, fileChooser.getSelectedFile()));
             }
         }
     }
@@ -121,7 +118,7 @@ public class AppFrame extends JFrame {
             if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
                 updatePreview(null);
                 progressBar.setIndeterminate(true);
-                runWorker(new CompareWorker(AppFrame.this, fileChooser.getSelectedFile()));
+                runWorker("Comparing...", new CompareWorker(AppFrame.this, fileChooser.getSelectedFile()));
             }
         }
     }
@@ -131,7 +128,15 @@ public class AppFrame extends JFrame {
         public void actionPerformed(ActionEvent evt) {
             updatePreview(null);
             progressBar.setIndeterminate(true);
-            runWorker(new ClonePreviewWorker(AppFrame.this));
+            runWorker("Previewing cloning...", new ClonePreviewWorker(AppFrame.this));
+        }
+    }
+
+    private class PlayActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            setPlayButtonEnabled(false);
+            runWorker("Cloning...", new CloneExecuteWorker(AppFrame.this, tasksTableModel.getData()));
         }
     }
 
@@ -160,7 +165,6 @@ public class AppFrame extends JFrame {
     }
 
     public AppFrame() {
-        defaultComparator = new DefaultComparator();
         progressListener = new ProgressListener();
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -196,8 +200,9 @@ public class AppFrame extends JFrame {
         toolBar.addSeparator();
 
         btnPlay = new JButton((String)null);
+        btnPlay.addActionListener(new PlayActionListener());
         btnPlay.setEnabled(false);
-        btnPlay.setToolTipText("Execute tasks");
+        btnPlay.setToolTipText("Execute cloning");
         btnPlay.setIcon(new ImageIcon(AppFrame.class.getResource("/images/play-16x16.png")));
         toolBar.add(btnPlay);
 
@@ -213,7 +218,6 @@ public class AppFrame extends JFrame {
         tblTasks.addKeyListener(new TasksTableListener());
         tblTasks.setShowVerticalLines(false);
         tblTasks.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tblTasks.setDefaultRenderer(String.class, new StringTableCellRenderer());
         tblTasks.setDefaultRenderer(Task.Type.class, new TaskTypeTableCellRenderer());
         tblTasks.setFillsViewportHeight(true);
         tblTasks.setGridColor(tblTasks.getTableHeader().getBackground());
@@ -225,8 +229,9 @@ public class AppFrame extends JFrame {
         tblTasks.getColumnModel().getColumn(2).setMinWidth(60);
         tblTasks.getColumnModel().getColumn(2).setPreferredWidth(60);
         tblTasks.getColumnModel().getColumn(2).setMaxWidth(120);
+        DefaultComparator defaultComparator = new DefaultComparator();
         TableRowSorter<TasksTableModel> rowSorter = new TableRowSorter<TasksTableModel>(tasksTableModel);
-        rowSorter.setComparator(0, defaultComparator);
+        rowSorter.setComparator(0, new TaskTypeComparator());
         rowSorter.setComparator(1, defaultComparator);
         rowSorter.setComparator(2, defaultComparator);
         tblTasks.setRowSorter(rowSorter);
@@ -271,13 +276,13 @@ public class AppFrame extends JFrame {
         return fileChooser;
     }
 
-    private void runWorker(Worker worker) {
+    private void runWorker(String status, Worker worker) {
         processing = true;
         btnScan.setEnabled(false);
         btnCompare.setEnabled(false);
         btnClone.setEnabled(false);
         progressBar.setValue(0);
-        setStatus(null);
+        setStatus(status);
         worker.addPropertyChangeListener(progressListener);
         worker.execute();
     }
@@ -291,8 +296,12 @@ public class AppFrame extends JFrame {
         setStatus(status);
     }
 
+    public void setPlayButtonEnabled(boolean enabled) {
+        btnPlay.setEnabled(enabled);
+    }
+
     public void updatePreview(Delta delta) {
-        btnPlay.setEnabled(delta != null);
+        setPlayButtonEnabled(delta != null);
         if (delta != null || tblTasks.getRowCount() > 0) {
             tasksTableModel.setData(delta);
         }
@@ -303,8 +312,7 @@ public class AppFrame extends JFrame {
     }
 
     public void setStatus(String text) {
-        String status = text == null? " ": " " + text;
-        statusBar.setText(status);
+        statusBar.setText(text == null? " ": " " + text);
     }
 
 }

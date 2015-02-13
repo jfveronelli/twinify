@@ -13,7 +13,8 @@ import java.io.Writer;
 
 import ar.org.crossknight.twinify.domain.delta.CreateArchiveTask;
 import ar.org.crossknight.twinify.domain.delta.CreateFolderTask;
-import ar.org.crossknight.twinify.domain.delta.DeleteResourceTask;
+import ar.org.crossknight.twinify.domain.delta.DeleteArchiveTask;
+import ar.org.crossknight.twinify.domain.delta.DeleteFolderTask;
 import ar.org.crossknight.twinify.domain.delta.Delta;
 import ar.org.crossknight.twinify.domain.delta.Task;
 import ar.org.crossknight.twinify.domain.delta.UpdateArchiveTask;
@@ -54,20 +55,22 @@ public final class DeltaSerializer {
         while ((line = reader.readLine()) != null) {
             String header = line.substring(0, Task.HEADER_SIZE);
             String config = line.substring(Task.HEADER_SIZE);
-            if (header.equals(DeleteResourceTask.HEADER)) {
-                delta.add(new DeleteResourceTask(config));
-            } else if (header.equals(UpdateArchiveTask.HEADER)) {
-                String uid = config.substring(0, UidGenerator.LENGTH);
-                String path = config.substring(UidGenerator.LENGTH + 1);
-                String contentPath = Path.concat(directory.getAbsolutePath(), uid);
-                delta.add(new UpdateArchiveTask(path, uid, contentPath));
-            } else if (header.equals(CreateFolderTask.HEADER)) {
+            if (header.equals(CreateFolderTask.HEADER)) {
                 delta.add(new CreateFolderTask(config));
             } else if (header.equals(CreateArchiveTask.HEADER)) {
                 String uid = config.substring(0, UidGenerator.LENGTH);
                 String path = config.substring(UidGenerator.LENGTH + 1);
                 String contentPath = Path.concat(directory.getAbsolutePath(), uid);
                 delta.add(new CreateArchiveTask(path, uid, contentPath));
+            } else if (header.equals(UpdateArchiveTask.HEADER)) {
+                String uid = config.substring(0, UidGenerator.LENGTH);
+                String path = config.substring(UidGenerator.LENGTH + 1);
+                String contentPath = Path.concat(directory.getAbsolutePath(), uid);
+                delta.add(new UpdateArchiveTask(path, uid, contentPath));
+            } else if (header.equals(DeleteFolderTask.HEADER)) {
+                delta.add(new DeleteFolderTask(config));
+            } else if (header.equals(DeleteArchiveTask.HEADER)) {
+                delta.add(new DeleteArchiveTask(config));
             }
         }
 
@@ -77,13 +80,13 @@ public final class DeltaSerializer {
 
     private static void checkDirectory(File directory) throws IOException {
         if (!directory.isDirectory()) {
-            throw new IOException("Expected a directory at [" + directory.getAbsolutePath() + "]");
+            throw new IOException("Expected folder at [" + directory.getAbsolutePath() + "]");
         }
     }
 
     private static void createDirectory(File directory) throws IOException {
         if (!directory.mkdirs()) {
-            throw new IOException("Could not create directory [" + directory.getAbsolutePath() + "]");
+            throw new IOException("Could not create folder [" + directory.getAbsolutePath() + "]");
         }
     }
 

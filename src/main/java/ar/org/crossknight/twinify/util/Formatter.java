@@ -11,7 +11,7 @@ public final class Formatter {
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	static {
-		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	private Formatter() {}

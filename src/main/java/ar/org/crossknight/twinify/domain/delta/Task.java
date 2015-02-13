@@ -6,7 +6,7 @@ public abstract class Task {
 
     public static final int HEADER_SIZE = 7;
 
-    public static enum Type {CREATE_FOLDER, CREATE_ARCHIVE, UPDATE_ARCHIVE, DELETE_RESOURCE}
+    public static enum Type {CREATE_FOLDER, DELETE_FOLDER, CREATE_ARCHIVE, UPDATE_ARCHIVE, DELETE_ARCHIVE}
 
     private String path;
 

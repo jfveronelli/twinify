@@ -51,7 +51,7 @@ public class Delta {
 
         for (Archive archiveB: folderB.getArchives()) {
             if (folderA.getArchive(archiveB.getName()) == null) {
-                add(new DeleteResourceTask(archiveB.getPath()));
+                add(new DeleteArchiveTask(archiveB.getPath()));
             }
         }
 
@@ -61,7 +61,7 @@ public class Delta {
 
         for (Folder subfolderB: folderB.getSubfolders()) {
             if (folderA.getSubfolder(subfolderB.getName()) == null) {
-                add(new DeleteResourceTask(subfolderB.getPath()));
+                add(new DeleteFolderTask(subfolderB.getPath()));
             }
         }
     }
@@ -74,7 +74,11 @@ public class Delta {
         return twinPath;
     }
 
-    public void add(DeleteResourceTask task) {
+    public void add(DeleteFolderTask task) {
+        deleteTasks.add(task);
+    }
+
+    public void add(DeleteArchiveTask task) {
         deleteTasks.add(task);
     }
 
@@ -91,17 +95,14 @@ public class Delta {
     }
 
     public boolean remove(Task task) {
-        if (task instanceof DeleteResourceTask) {
-            return deleteTasks.remove(task);
+        if (task.getType() == Task.Type.CREATE_FOLDER || task.getType() == Task.Type.CREATE_ARCHIVE) {
+            return createTasks.remove(task);
         }
-        if (task instanceof UpdateArchiveTask) {
+        if (task.getType() == Task.Type.UPDATE_ARCHIVE) {
             return updateTasks.remove(task);
         }
-        if (task instanceof CreateFolderTask) {
-            return createTasks.remove(task);
-        }
-        if (task instanceof CreateArchiveTask) {
-            return createTasks.remove(task);
+        if (task.getType() == Task.Type.DELETE_FOLDER || task.getType() == Task.Type.DELETE_ARCHIVE) {
+            return deleteTasks.remove(task);
         }
         return false;
     }

@@ -8,6 +8,8 @@ import ar.org.crossknight.twinify.util.Utils;
 
 public class Archive implements Resource {
 
+    // Required because filesystems have different time granularity. Eg: 2s for FAT.
+    private static final long MAX_ALLOWED_MILLIS_DIFFERENCE = 2000L;
 	public static final String FIELD_SEPARATOR = " | ";
 
 	private Folder parent;
@@ -54,7 +56,8 @@ public class Archive implements Resource {
     public boolean equals(Object o) {
     	if (o instanceof Archive) {
     		Archive a = (Archive)o;
-    		return name.equals(a.getName()) && lastModified.equals(a.getLastModified()) && size == a.getSize();
+    		return name.equals(a.getName()) && size == a.getSize() &&
+    		        Math.abs(lastModified.getTime() - a.getLastModified().getTime()) <= MAX_ALLOWED_MILLIS_DIFFERENCE;
     	}
     	return false;
     }

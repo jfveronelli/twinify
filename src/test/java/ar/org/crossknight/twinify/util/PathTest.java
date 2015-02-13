@@ -26,6 +26,16 @@ public class PathTest {
     }
 
     @Test
+    public void extensionShouldSucceed() {
+        assertEquals("fg", Path.extension("/a/b.c/d.e.fg"));
+        assertEquals("bc", Path.extension("/a/.bc"));
+        assertEquals("bc", Path.extension(".bc"));
+        assertEquals("", Path.extension("/a/b/"));
+        assertEquals("", Path.extension("/a/b"));
+        assertEquals("c", Path.extension("/a/b.c/"));
+    }
+
+    @Test
     public void parentShouldSucceed() {
         assertEquals(null, Path.parent("/"));
         assertEquals("/a/", Path.parent("/a/b/"));

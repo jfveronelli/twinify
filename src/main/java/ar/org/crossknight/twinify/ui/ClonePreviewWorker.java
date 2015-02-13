@@ -19,7 +19,11 @@ public class ClonePreviewWorker extends Worker {
         delta = DeltaSerializer.read(deltaDirectory);
         setProgress(100);
 
-        return "Please review changes before executing tasks";
+        if (delta.getTasks().isEmpty()) {
+            delta = null;
+            return "Donor and target are equals twins";
+        }
+        return "Please review changes before executing cloning";
     }
 
     @Override

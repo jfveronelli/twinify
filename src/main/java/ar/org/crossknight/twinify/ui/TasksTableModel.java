@@ -24,6 +24,10 @@ public class TasksTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public Delta getData() {
+        return delta;
+    }
+
     @Override
     public int getColumnCount() {
         return COLUMN_NAMES.length;
@@ -53,10 +57,17 @@ public class TasksTableModel extends AbstractTableModel {
         case 1:
             return task.getPath();
         case 2:
-            return Path.extension(task.getPath());
+            return getFileExtension(task);
         default:
             throw new IllegalArgumentException();
         }
+    }
+
+    private static String getFileExtension(Task task) {
+        if (task.getType() == Task.Type.CREATE_FOLDER || task.getType() == Task.Type.DELETE_FOLDER) {
+            return "";
+        }
+        return Path.extension(task.getPath());
     }
 
     public void removeRows(int[] rows) {
