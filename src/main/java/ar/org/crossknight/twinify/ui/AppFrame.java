@@ -74,9 +74,9 @@ public class AppFrame extends JFrame {
         private static final long serialVersionUID = 1L;
         private static final ImageIcon[] IMAGES = {
             new ImageIcon(AppFrame.class.getResource("/images/task-folder-create-16x16.png")),
-            new ImageIcon(AppFrame.class.getResource("/images/task-folder-delete-16x16.png")),
             new ImageIcon(AppFrame.class.getResource("/images/task-archive-create-16x16.png")),
             new ImageIcon(AppFrame.class.getResource("/images/task-archive-update-16x16.png")),
+            new ImageIcon(AppFrame.class.getResource("/images/task-folder-delete-16x16.png")),
             new ImageIcon(AppFrame.class.getResource("/images/task-archive-delete-16x16.png"))
         };
         @Override
