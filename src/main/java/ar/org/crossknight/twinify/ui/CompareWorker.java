@@ -13,6 +13,7 @@ import ar.org.crossknight.twinify.util.Utils;
 public class CompareWorker extends Worker {
 
     private final File folder;
+    private Delta delta;
 
     public CompareWorker(AppFrame appFrame, File folder) {
         super(appFrame);
@@ -39,7 +40,19 @@ public class CompareWorker extends Worker {
         DeltaSerializer.write(deltaDirectory, delta);
         setProgress(100);
 
-        return "Comparison complete";
+        if (!delta.getTasks().isEmpty()) {
+            this.delta = delta;
+            return "Comparison complete";
+        }
+        return "Comparison complete: donor and target are equals twins";
+    }
+
+    @Override
+    protected void done() {
+        super.done();
+        if (delta != null) {
+            getAppFrame().updatePreview(delta);
+        }
     }
 
 }
