@@ -40,7 +40,7 @@ public class TasksTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int col) {
-        return col == 0? Task.Type.class: String.class;
+        return col == 0? Task.class: String.class;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TasksTableModel extends AbstractTableModel {
         Task task = tasks.get(row);
         switch (col) {
         case 0:
-            return task.getType();
+            return task;
         case 1:
             return task.getPath();
         case 2:

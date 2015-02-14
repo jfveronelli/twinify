@@ -56,17 +56,21 @@ public class AppFrame extends JFrame {
     private final JLabel statusBar;
     private final ProgressListener progressListener;
 
-    private static class DefaultComparator implements Comparator<Object> {
+    private static class StringComparator implements Comparator<String> {
         @Override
-        public int compare(Object o1, Object o2) {
-            return o1.toString().compareToIgnoreCase(o2.toString());
+        public int compare(String s1, String s2) {
+            return s1.compareToIgnoreCase(s2);
         }
     }
 
-    private static class TaskTypeComparator implements Comparator<Task.Type> {
+    private static class TaskComparator implements Comparator<Task> {
         @Override
-        public int compare(Task.Type t1, Task.Type t2) {
-            return t1.ordinal() - t2.ordinal();
+        public int compare(Task t1, Task t2) {
+            int result = t1.getType().ordinal() - t2.getType().ordinal();
+            if (result == 0) {
+                result = t1.getPath().compareToIgnoreCase(t2.getPath());
+            }
+            return result;
         }
     }
 
@@ -83,7 +87,7 @@ public class AppFrame extends JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
             JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
             label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setIcon(IMAGES[((Task.Type)value).ordinal()]);
+            label.setIcon(IMAGES[((Task)value).getType().ordinal()]);
             label.setText(null);
             return label;
         }
@@ -218,7 +222,7 @@ public class AppFrame extends JFrame {
         tblTasks.addKeyListener(new TasksTableListener());
         tblTasks.setShowVerticalLines(false);
         tblTasks.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tblTasks.setDefaultRenderer(Task.Type.class, new TaskTypeTableCellRenderer());
+        tblTasks.setDefaultRenderer(Task.class, new TaskTypeTableCellRenderer());
         tblTasks.setFillsViewportHeight(true);
         tblTasks.setGridColor(tblTasks.getTableHeader().getBackground());
         tasksTableModel = new TasksTableModel();
@@ -229,11 +233,11 @@ public class AppFrame extends JFrame {
         tblTasks.getColumnModel().getColumn(2).setMinWidth(60);
         tblTasks.getColumnModel().getColumn(2).setPreferredWidth(60);
         tblTasks.getColumnModel().getColumn(2).setMaxWidth(120);
-        DefaultComparator defaultComparator = new DefaultComparator();
+        StringComparator stringComparator = new StringComparator();
         TableRowSorter<TasksTableModel> rowSorter = new TableRowSorter<TasksTableModel>(tasksTableModel);
-        rowSorter.setComparator(0, new TaskTypeComparator());
-        rowSorter.setComparator(1, defaultComparator);
-        rowSorter.setComparator(2, defaultComparator);
+        rowSorter.setComparator(0, new TaskComparator());
+        rowSorter.setComparator(1, stringComparator);
+        rowSorter.setComparator(2, stringComparator);
         tblTasks.setRowSorter(rowSorter);
 
         JScrollPane spTasks = new JScrollPane(tblTasks);
