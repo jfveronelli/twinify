@@ -1,6 +1,7 @@
 package ar.org.crossknight.twinify.ui;
 
 import java.io.File;
+import java.io.IOException;
 
 import ar.org.crossknight.twinify.domain.delta.Delta;
 import ar.org.crossknight.twinify.serialization.DeltaSerializer;
@@ -16,7 +17,11 @@ public class ClonePreviewWorker extends Worker {
     @Override
     protected String doInBackground() throws Exception {
         File deltaDirectory = new File(Delta.DEFAULT_DELTA_DIRECTORY);
-        delta = DeltaSerializer.read(deltaDirectory);
+        try {
+            delta = DeltaSerializer.read(deltaDirectory);
+        } catch (IOException ex) {
+            return "No saved changes were found";
+        }
         setProgress(100);
 
         if (delta.getTasks().isEmpty()) {
