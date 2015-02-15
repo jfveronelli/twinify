@@ -141,9 +141,10 @@ public class AppFrame extends JFrame {
     private class FilterActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent evt) {
-            JFileChooser fileChooser = new JFileChooser();
+            JFileChooser fileChooser = new JFileChooser(".");
             fileChooser.setDialogTitle("Choose filters file");
-            fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Filters file", "filters"));
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Filters file (*.filters)", "filters"));
             if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
                 setPreviewButtonsEnabled(false);
                 runWorker("Applying filters...", new FilterWorker(AppFrame.this,

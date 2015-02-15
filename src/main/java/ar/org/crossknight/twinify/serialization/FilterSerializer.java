@@ -37,7 +37,7 @@ public final class FilterSerializer {
 
         String line;
         while ((line = reader.readLine()) != null) {
-            if (line.startsWith(COMMENT_TAG)) {
+            if (line.length() == 0 || line.startsWith(COMMENT_TAG)) {
                 continue;
             }
             boolean includes = line.startsWith(Filter.INCLUDE_TAG);

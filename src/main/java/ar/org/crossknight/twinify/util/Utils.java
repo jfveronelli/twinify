@@ -61,8 +61,9 @@ public final class Utils {
     public static final boolean apply(List<Task> tasks, List<Filter> filters) {
         boolean removed = false;
         for (Iterator<Task> t = tasks.iterator(); t.hasNext();) {
+            Task task = t.next();
             for (Filter filter: filters) {
-                if (filter.matches(t.next())) {
+                if (filter.matches(task)) {
                     if (!filter.includes()) {
                         t.remove();
                         removed = true;
