@@ -7,6 +7,7 @@ import ar.org.crossknight.twinify.domain.snapshot.Archive;
 import ar.org.crossknight.twinify.domain.snapshot.Folder;
 import ar.org.crossknight.twinify.domain.snapshot.Snapshot;
 import ar.org.crossknight.twinify.util.UidGenerator;
+import ar.org.crossknight.twinify.util.Utils;
 
 public class Delta {
 
@@ -114,6 +115,13 @@ public class Delta {
         return tasks;
     }
 
+    public boolean apply(List<Filter> filters) {
+        boolean removed = Utils.apply(deleteTasks, filters);
+        removed |= Utils.apply(updateTasks, filters);
+        removed |= Utils.apply(createTasks, filters);
+        return removed;
+    }
+
     public void run() {
         for (Task task: getTasks()) {
             task.runOn(twinPath);
@@ -123,6 +131,15 @@ public class Delta {
     @Override
     public String toString() {
         return "TWIN   " + twinPath;
+    }
+
+    @Override
+    public Delta clone() {
+        Delta delta = new Delta(twinPath);
+        delta.deleteTasks.addAll(deleteTasks);
+        delta.updateTasks.addAll(updateTasks);
+        delta.createTasks.addAll(createTasks);
+        return delta;
     }
 
 }

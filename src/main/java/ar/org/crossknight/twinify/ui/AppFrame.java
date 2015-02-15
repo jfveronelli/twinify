@@ -21,6 +21,7 @@ import java.awt.Insets;
 import java.awt.Component;
 
 import javax.swing.border.BevelBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
@@ -50,6 +51,7 @@ public class AppFrame extends JFrame {
     private final JButton btnScan;
     private final JButton btnCompare;
     private final JButton btnClone;
+    private final JButton btnFilter;
     private final JButton btnPlay;
     private final JTable tblTasks;
     private final JProgressBar progressBar;
@@ -136,10 +138,24 @@ public class AppFrame extends JFrame {
         }
     }
 
+    private class FilterActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose filters file");
+            fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Filters file", "filters"));
+            if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
+                setPreviewButtonsEnabled(false);
+                runWorker("Applying filters...", new FilterWorker(AppFrame.this,
+                        fileChooser.getSelectedFile(), tasksTableModel.getData().clone()));
+            }
+        }
+    }
+
     private class PlayActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent evt) {
-            setPlayButtonEnabled(false);
+            setPreviewButtonsEnabled(false);
             runWorker("Cloning...", new CloneExecuteWorker(AppFrame.this, tasksTableModel.getData()));
         }
     }
@@ -202,6 +218,13 @@ public class AppFrame extends JFrame {
         toolBar.add(btnClone);
 
         toolBar.addSeparator();
+
+        btnFilter = new JButton((String)null);
+        btnFilter.addActionListener(new FilterActionListener());
+        btnFilter.setEnabled(false);
+        btnFilter.setToolTipText("Apply filters");
+        btnFilter.setIcon(new ImageIcon(AppFrame.class.getResource("/images/filter-16x16.png")));
+        toolBar.add(btnFilter);
 
         btnPlay = new JButton((String)null);
         btnPlay.addActionListener(new PlayActionListener());
@@ -300,12 +323,13 @@ public class AppFrame extends JFrame {
         setStatus(status);
     }
 
-    public void setPlayButtonEnabled(boolean enabled) {
+    public void setPreviewButtonsEnabled(boolean enabled) {
+        btnFilter.setEnabled(enabled);
         btnPlay.setEnabled(enabled);
     }
 
     public void updatePreview(Delta delta) {
-        setPlayButtonEnabled(delta != null);
+        setPreviewButtonsEnabled(delta != null);
         if (delta != null || tblTasks.getRowCount() > 0) {
             tasksTableModel.setData(delta);
         }

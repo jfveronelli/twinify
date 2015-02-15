@@ -1,0 +1,10 @@
+# Examples:
+# -PATH /abc
+#   Excludes all tasks beginning with the given path
+# +PATH /abc
+#   Includes all tasks beginning with the given path
+# -EXTENSION jpg
+#   Excludes all tasks with the given extension
+# +EXTENSION jpg
+#   Includes all tasks with the given extension
+#

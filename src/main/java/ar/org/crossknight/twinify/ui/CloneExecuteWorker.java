@@ -32,7 +32,7 @@ public class CloneExecuteWorker extends Worker {
     @Override
     protected void done() {
         super.done();
-        getAppFrame().setPlayButtonEnabled(true);
+        getAppFrame().setPreviewButtonsEnabled(true);
     }
 
 }

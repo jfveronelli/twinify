@@ -13,8 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
+import ar.org.crossknight.twinify.domain.delta.Filter;
+import ar.org.crossknight.twinify.domain.delta.Task;
 import ar.org.crossknight.twinify.domain.snapshot.Resource;
 
 public final class Utils {
@@ -54,6 +57,22 @@ public final class Utils {
 		Collections.sort(list, RESOURCE_NAME_COMPARATOR);
 		return list;
 	}
+
+    public static final boolean apply(List<Task> tasks, List<Filter> filters) {
+        boolean removed = false;
+        for (Iterator<Task> t = tasks.iterator(); t.hasNext();) {
+            for (Filter filter: filters) {
+                if (filter.matches(t.next())) {
+                    if (!filter.includes()) {
+                        t.remove();
+                        removed = true;
+                    }
+                    break;
+                }
+            }
+        }
+        return removed;
+    }
 
     public static final Date stripMillis(Date date) {
         if (date.getTime() % 1000L > 0L) {
