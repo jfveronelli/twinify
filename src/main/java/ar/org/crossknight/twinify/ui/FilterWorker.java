@@ -37,7 +37,7 @@ public class FilterWorker extends Worker {
         deltaChanged = delta.apply(filterList);
         setProgress(100);
 
-        return "Filtering complete: please review changes before executing cloning";
+        return "Filtering complete";
     }
 
     @Override

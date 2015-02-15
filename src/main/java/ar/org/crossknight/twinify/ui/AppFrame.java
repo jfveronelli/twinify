@@ -47,6 +47,7 @@ public class AppFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private boolean processing;
+    private ExecutionMode executionMode;
     private final TasksTableModel tasksTableModel;
     private final JButton btnScan;
     private final JButton btnCompare;
@@ -57,6 +58,17 @@ public class AppFrame extends JFrame {
     private final JProgressBar progressBar;
     private final JLabel statusBar;
     private final ProgressListener progressListener;
+
+    private static enum ExecutionMode {
+        EXTRACT("Execute extraction"), CLONE("Execute cloning");
+        private final String toolTip;
+        ExecutionMode(String toolTip) {
+            this.toolTip = toolTip;
+        }
+        public String getToolTip() {
+            return toolTip;
+        }
+    }
 
     private static class StringComparator implements Comparator<String> {
         @Override
@@ -122,6 +134,7 @@ public class AppFrame extends JFrame {
         public void actionPerformed(ActionEvent evt) {
             JFileChooser fileChooser = createFolderChooser("Choose donor folder");
             if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
+                setExecutionMode(ExecutionMode.EXTRACT);
                 updatePreview(null);
                 progressBar.setIndeterminate(true);
                 runWorker("Comparing...", new CompareWorker(AppFrame.this, fileChooser.getSelectedFile()));
@@ -132,6 +145,7 @@ public class AppFrame extends JFrame {
     private class CloneActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent evt) {
+            setExecutionMode(ExecutionMode.CLONE);
             updatePreview(null);
             progressBar.setIndeterminate(true);
             runWorker("Previewing cloning...", new ClonePreviewWorker(AppFrame.this));
@@ -147,6 +161,7 @@ public class AppFrame extends JFrame {
             fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Filters file (*.filters)", "filters"));
             if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
                 setPreviewButtonsEnabled(false);
+                progressBar.setIndeterminate(true);
                 runWorker("Applying filters...", new FilterWorker(AppFrame.this,
                         fileChooser.getSelectedFile(), tasksTableModel.getData().clone()));
             }
@@ -157,7 +172,15 @@ public class AppFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             setPreviewButtonsEnabled(false);
-            runWorker("Cloning...", new CloneExecuteWorker(AppFrame.this, tasksTableModel.getData()));
+            switch (executionMode) {
+            case EXTRACT:
+                progressBar.setIndeterminate(true);
+                runWorker("Extracting changes...", new ExtractWorker(AppFrame.this, tasksTableModel.getData()));
+                break;
+            case CLONE:
+                runWorker("Cloning...", new CloneExecuteWorker(AppFrame.this, tasksTableModel.getData()));
+                break;
+            }
         }
     }
 
@@ -208,7 +231,7 @@ public class AppFrame extends JFrame {
 
         btnCompare = new JButton();
         btnCompare.addActionListener(new CompareActionListener());
-        btnCompare.setToolTipText("Compare donor with scanned target and extract changes");
+        btnCompare.setToolTipText("Compare donor with scanned target to extract changes");
         btnCompare.setIcon(new ImageIcon(AppFrame.class.getResource("/images/compare-16x16.png")));
         toolBar.add(btnCompare);
 
@@ -230,7 +253,7 @@ public class AppFrame extends JFrame {
         btnPlay = new JButton((String)null);
         btnPlay.addActionListener(new PlayActionListener());
         btnPlay.setEnabled(false);
-        btnPlay.setToolTipText("Execute cloning");
+        btnPlay.setToolTipText("Execute");
         btnPlay.setIcon(new ImageIcon(AppFrame.class.getResource("/images/play-16x16.png")));
         toolBar.add(btnPlay);
 
@@ -322,6 +345,11 @@ public class AppFrame extends JFrame {
         btnClone.setEnabled(true);
         progressBar.setIndeterminate(false);
         setStatus(status);
+    }
+
+    private void setExecutionMode(ExecutionMode mode) {
+        executionMode = mode;
+        btnPlay.setToolTipText(mode.getToolTip());
     }
 
     public void setPreviewButtonsEnabled(boolean enabled) {

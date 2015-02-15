@@ -20,7 +20,7 @@ public class ClonePreviewWorker extends Worker {
         try {
             delta = DeltaSerializer.read(deltaDirectory);
         } catch (IOException ex) {
-            return "No saved changes were found";
+            return "No extracted changes were found";
         }
         setProgress(100);
 
