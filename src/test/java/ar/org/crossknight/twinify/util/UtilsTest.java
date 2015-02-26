@@ -67,6 +67,34 @@ public class UtilsTest {
     }
 
     @Test
+    public void equalsShouldReturnFalseWhenAResourceNameIsNotInTheSecondCollection() {
+        Resource r1 = mock(Resource.class);
+        when(r1.getName()).thenReturn("a");
+        Resource r2 = mock(Resource.class);
+        when(r2.getName()).thenReturn("b");
+        Collection<Resource> c1 = Arrays.asList(r1);
+        Collection<Resource> c2 = Arrays.asList(r2);
+
+        boolean result = Utils.equals(c1, c2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void equalsShouldReturnFalseWhenResourcesWithSameNameAreNotEqual() {
+        Resource r1 = mock(Resource.class);
+        when(r1.getName()).thenReturn("a");
+        Resource r2 = mock(Resource.class);
+        when(r2.getName()).thenReturn("a");
+        Collection<Resource> c1 = Arrays.asList(r1);
+        Collection<Resource> c2 = Arrays.asList(r2);
+
+        boolean result = Utils.equals(c1, c2);
+
+        assertFalse(result);
+    }
+
+    @Test
     public void sortShouldSucceed() {
         Folder root = new Snapshot("/").getRoot();
         Folder f1 = new Folder(root, "Albany");
