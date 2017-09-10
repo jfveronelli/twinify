@@ -4,14 +4,16 @@ public final class App {
 
     private App() {}
 
-    public static final void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         if (args.length == 2) {
             Command[] commands = {new ScanCommand(), new CompareCommand(), new CloneCommand()};
             for (Command command: commands) {
                 if (command.getName().equalsIgnoreCase(args[0])) {
                     try {
                         command.execute(args[1]);
-                    } catch (TerminationException ex) {}
+                    } catch (TerminationException ex) {
+                        // Safe to ignore
+                    }
                     return;
                 }
             }
@@ -28,7 +30,7 @@ public final class App {
         write("          clone [twin path]      Applies delta to the twin");
     }
 
-    public static final void write(String text) {
+    public static void write(String text) {
         System.out.println(text);
     }
 

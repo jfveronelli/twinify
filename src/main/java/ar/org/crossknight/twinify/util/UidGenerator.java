@@ -8,13 +8,13 @@ public class UidGenerator {
     private int nextValue;
 
     public String next() {
-        String value = "";
+        StringBuilder value = new StringBuilder("");
         int remainder = nextValue++;
         for (int c = 0; c < LENGTH; c++) {
-            value = SYMBOLS.charAt(remainder % SYMBOLS.length()) + value;
+            value.insert(0, SYMBOLS.charAt(remainder % SYMBOLS.length()));
             remainder /= SYMBOLS.length();
         }
-        return value;
+        return value.toString();
     }
 
 }

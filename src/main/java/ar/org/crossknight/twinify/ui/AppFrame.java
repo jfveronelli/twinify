@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Comparator;
 
 import javax.swing.ListSelectionModel;
@@ -59,7 +60,7 @@ public class AppFrame extends JFrame {
     private final JLabel statusBar;
     private final ProgressListener progressListener;
 
-    private static enum ExecutionMode {
+    private enum ExecutionMode {
         EXTRACT("Execute extraction"), CLONE("Execute cloning");
         private final String toolTip;
         ExecutionMode(String toolTip) {
@@ -171,15 +172,24 @@ public class AppFrame extends JFrame {
     private class PlayActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent evt) {
-            setPreviewButtonsEnabled(false);
-            switch (executionMode) {
-            case EXTRACT:
+            Delta delta = tasksTableModel.getData();
+            if (executionMode == ExecutionMode.EXTRACT) {
+                setPreviewButtonsEnabled(false);
                 progressBar.setIndeterminate(true);
-                runWorker("Extracting changes...", new ExtractWorker(AppFrame.this, tasksTableModel.getData()));
-                break;
-            case CLONE:
-                runWorker("Cloning...", new CloneExecuteWorker(AppFrame.this, tasksTableModel.getData()));
-                break;
+                runWorker("Extracting changes...", new ExtractWorker(AppFrame.this, delta));
+                return;
+            }
+            if (executionMode == ExecutionMode.CLONE) {
+                if (!new File(delta.getTwinPath()).isDirectory()) {
+                    JFileChooser fileChooser = createFolderChooser("Choose target folder");
+                    if (fileChooser.showOpenDialog(AppFrame.this) == JFileChooser.APPROVE_OPTION) {
+                        delta.setTwinPath(fileChooser.getSelectedFile().getAbsolutePath());
+                    } else {
+                        return;
+                    }
+                }
+                setPreviewButtonsEnabled(false);
+                runWorker("Cloning...", new CloneExecuteWorker(AppFrame.this, delta));
             }
         }
     }

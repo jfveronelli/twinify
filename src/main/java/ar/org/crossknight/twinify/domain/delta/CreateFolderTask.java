@@ -23,7 +23,7 @@ public class CreateFolderTask extends Task {
         String folderPath = Path.concat(fullPath, getPath());
         File file = new File(folderPath);
         if (file.isDirectory()) {
-            //Windows is case-insensitive, so we must check the real directory name to assume it already exists
+            // Windows is case-insensitive, so we must check the real directory name to assume it already exists
             try {
                 String expectedName = Path.name(folderPath);
                 String realName = Path.name(file.getCanonicalPath());
