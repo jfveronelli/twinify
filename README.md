@@ -1,4 +1,5 @@
 # twinify
+[![GitHub release](https://img.shields.io/github/release/jfveronelli/twinify.svg)](https://github.com/jfveronelli/twinify/releases/latest)
 
 **Twinify** is a multiplatform Java library and application to backup a directory tree to a remote offline location.
 
@@ -32,7 +33,7 @@ The application may be run even from a USB stick.
 Julio Francisco Veronelli <julio.veronelli@crossknight.com.ar>
 
 
-## License
+## MIT License
 
 Copyright (c) 2015 CrossKnight
 
