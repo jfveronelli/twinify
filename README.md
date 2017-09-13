@@ -1,5 +1,6 @@
 # twinify
-[![GitHub release](https://img.shields.io/github/release/jfveronelli/twinify.svg)](https://github.com/jfveronelli/twinify/releases/latest)
+[![release](https://img.shields.io/github/release/jfveronelli/twinify.svg)](https://github.com/jfveronelli/twinify/releases/latest)
+[![coverage](https://codecov.io/gh/jfveronelli/twinify/branch/master/graph/badge.svg)](https://codecov.io/gh/jfveronelli/twinify)
 
 **Twinify** is a multiplatform Java library and application to backup a directory tree to a remote offline location.
 
