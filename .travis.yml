@@ -1,7 +1,10 @@
 sudo: false
 language: java
 jdk: openjdk7
+
+script: mvn clean package -B
 after_success: bash <(curl -s https://codecov.io/bash)
+
 deploy:
   provider: releases
   api-key:
