@@ -15,11 +15,10 @@ Most backup solutions allow you to backup a filesystem to a local media, or a re
 
 ## Download
 
-Latest version is 1.0.1, released on 2017/09/11.
-
 A working [Java 6+](http://www.oracle.com/technetwork/java/javase) runtime environment is required.
 
-Download the latest version from [here](https://github.com/jfveronelli/twinify/releases/download/v1.0.1/twinify-1.0.1.zip), extract the application, and then run the GUI like this:
+Download the latest `twinify-<version>.zip` from [here](https://github.com/jfveronelli/twinify/releases/latest) and extract the application.
+Then run the GUI by double-clicking on the file `crossknight-twinify.jar` or from the command line:
 
     java -jar crossknight-twinify.jar
 
