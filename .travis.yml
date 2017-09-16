@@ -1,6 +1,13 @@
 sudo: false
 language: java
-jdk:
-  - openjdk7
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+jdk: openjdk7
+after_success: bash <(curl -s https://codecov.io/bash)
+deploy:
+  provider: releases
+  api-key:
+    secure: R3sTvnw2cs8UmKt22BVhmORb3xGL6XfIMpyWOGXo9TnWtNAFMv27XCPXJw4CuIEjHeqdVu5YsRwSiza+/AA18k4RiIXEReKTrE5KRroJpE1JohAY3yCkiNrCPymHV26hsJrSZ12r/b4d9M8c2uGkPrdo9CaNSzj2eVPPynmHub0ySiiAtA9U2jQBI5rwYmtDY+6gef7d7LULQHEJpk0sa9K7HXer/tT1AcVQaRH1DD8QqncouV88SyjAON5wLhfk94xWS1+5J7e9wHzZ6oZVr5Z8zPQzUU9YSgLsJFonODic9hefeJuKeBiVrItw5LHaJciJ/G9IjADLenGxJLksqKfKMt3JiwWHs1s3O5cceTyhsuETDYK389okUOaqxujCAyIlKiTsoYLd+IF/9yBGWL48aT5ImdWYaCdybAQZAuwbPx/pGy3jRw6gvoko4j6ZfPkxeI9xEbWiL8V3umNOBRQ0FIrlv2xLIQQwkHnEXTCO0/o+gpmsimW6LmUVONMEQw9FbXAXVy3SUyZtOt7DeunZ5tr+IZF+iQJXv6JfRdHibUuQd/VPjX6mpd61jJ8VqWano+IYj6qmPtV//bMjy/MqEgjKgGS5KX2TuygaANGRmgOwD4oTj9Tr1RyXR0SL7HUrTxEusfFkLjPFj5e1SYvyz9AGdNC+Qu9WCfMS2iM=
+  file_glob: true
+  file: target/*.zip
+  skip_cleanup: true
+  on:
+    tags: true
